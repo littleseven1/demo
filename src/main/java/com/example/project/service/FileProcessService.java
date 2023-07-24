@@ -15,7 +15,7 @@ import java.util.zip.ZipInputStream;
 public class FileProcessService {
     @Autowired(required = false)
     public String processAndCheckFile(String fileKey) {
-        String filePath = FileKeyStorage.getFilePath(fileKey);
+        String filePath ="E:/la/"+fileKey;
 
         if (filePath == null) {
             return "Error: File not found.";
@@ -36,6 +36,7 @@ public class FileProcessService {
                         switch (fileName) {
                             case "action.xlsx" -> {
                                 String result = processActionSheet(workbook);
+
                                 if (!result.isEmpty()) {
                                     errors.append("Error in file: ").append(fileName).append("\n").append(result);
                                 }
@@ -107,7 +108,7 @@ public class FileProcessService {
         }
 
         for (Row row : sheet) {
-            if (row.getRowNum() == 0) continue; // Skip header row
+            if (row.getRowNum() == 0) continue;
 
             Integer userId = getCellValueAsInteger(row.getCell(0));
             Integer skuId = getCellValueAsInteger(row.getCell(1));
@@ -171,7 +172,7 @@ public class FileProcessService {
         }
 
         for (Row row : sheet) {
-            if (row.getRowNum() == 0) continue; // Skip header row
+            if (row.getRowNum() == 0) continue;
 
             Integer userId = getCellValueAsInteger(row.getCell(0));
             Integer skuId = getCellValueAsInteger(row.getCell(1));
