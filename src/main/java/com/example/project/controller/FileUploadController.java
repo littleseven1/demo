@@ -13,7 +13,7 @@ public class FileUploadController {
     private FileUploadService fileService;
 
     @PostMapping("/upload")
-    public String handleFileUpload(@RequestParam("file") MultipartFile file) {
+    public String handleFileUpload(@RequestParam MultipartFile file) {
         String fileKey = fileService.uploadFile(file);
         return fileKey;
     }
