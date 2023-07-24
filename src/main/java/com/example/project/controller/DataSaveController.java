@@ -36,9 +36,9 @@ public class DataSaveController {
         private String fileKey;
         private String fileDescription;
 
-        // Constructors, getters, and setters (可以使用IDE自动生成)
+        // Constructors, getters, and setters
 
-        // Constructors, getters, and setters (可以使用IDE自动生成)
+        // Constructors, getters, and setters
     }
 }
 */
