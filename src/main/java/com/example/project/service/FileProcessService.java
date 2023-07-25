@@ -1,6 +1,4 @@
 package com.example.project.service;
-
-
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -373,7 +371,7 @@ public class FileProcessService {
 
         for (Row row : sheet) {
             if (row.getRowNum() == 0) continue;
-
+            errorMap.put("isEmpty", false);
             Integer userId = getCellValueAsInteger(row.getCell(USER_ID_INDEX));
             Integer orderId = getCellValueAsInteger(row.getCell(ORDER_ID_INDEX));
             Integer score = getCellValueAsInteger(row.getCell(SCORE_INDEX));
@@ -405,6 +403,7 @@ public class FileProcessService {
                     }
                 }
             }
+
 
         }
 
