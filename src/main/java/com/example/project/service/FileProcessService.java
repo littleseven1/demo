@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
 @Service
 public class FileProcessService {
     @Autowired(required = false)
@@ -64,7 +65,7 @@ public class FileProcessService {
 
             } catch (IOException e) {
                 e.printStackTrace();
-                throw new IllegalArgumentException("Error while processing files.");
+                throw new IllegalArgumentException("处理文件时发生错误。");
             }
 
             result.put("error", errorMap);
@@ -287,15 +288,12 @@ public class FileProcessService {
         errorMap.put("isExist", true);
         Sheet sheet = workbook.getSheetAt(0);
         List<File.Sku> skus = new ArrayList<>();
-        // Define column indexes
         final int SKU_ID_INDEX = 0;
         final int PRICE_INDEX = 1;
         final int CATE_INDEX = 2;
 
-        // Check if header row exists
         Row headerRow = sheet.getRow(0);
         if (headerRow == null) {
-
             errorMap.put("isEmpty", true);
         }
 
@@ -361,12 +359,10 @@ public class FileProcessService {
         errorMap.put("isExist", true);
         Sheet sheet = workbook.getSheetAt(0);
         List<File.Comment> comments = new ArrayList<>();
-        // Define column indexes
         final int USER_ID_INDEX = 0;
         final int ORDER_ID_INDEX = 1;
         final int SCORE_INDEX = 2;
 
-        // Check if header row exists
         Row headerRow = sheet.getRow(0);
         if (headerRow == null) {
             errorMap.put("isEmpty", true);
@@ -387,7 +383,7 @@ public class FileProcessService {
         }
 
         for (Row row : sheet) {
-            if (row.getRowNum() == 0) continue; // Skip header row
+            if (row.getRowNum() == 0) continue;
 
             Integer userId = getCellValueAsInteger(row.getCell(USER_ID_INDEX));
             Integer orderId = getCellValueAsInteger(row.getCell(ORDER_ID_INDEX));
@@ -405,7 +401,6 @@ public class FileProcessService {
             if (headerRow.getCell(ORDER_ID_INDEX) != null) {
                 if (orderId == null) {
                     columnsNan.add("o_id");
-
                 } else {
                     if (!isValidDataType(orderId, Integer.class)) {
                         dataType.add("o_id");
@@ -415,7 +410,6 @@ public class FileProcessService {
             if (headerRow.getCell(SCORE_INDEX) != null) {
                 if (score == null) {
                     columnsNan.add("score");
-
                 } else {
                     if (!isValidDataType(score, Integer.class)) {
                         dataType.add("score");
