@@ -13,8 +13,7 @@ import java.util.zip.ZipInputStream;
 public class FileProcessService {
     @Autowired(required = false)
     public List<Map<String, Object>> processAndCheckFile(String fileKey) {
-        String filePath = "E:/la/" + fileKey;
-
+        String filePath = filepath.path + fileKey;
         List<String> fileNames = Arrays.asList("action.xlsx", "comment.xlsx", "order.xlsx", "sku.xlsx");
 
         List<Map<String, Object>> resultList = new ArrayList<>();

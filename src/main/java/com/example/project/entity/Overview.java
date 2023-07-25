@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.time.LocalDateTime;
 
 @Entity
 public class Overview {
@@ -13,25 +14,12 @@ public class Overview {
 
     private String description;
 
-    public Overview(String fileKey, String description) {
+    private LocalDateTime date;
+
+    public Overview(String fileKey, String description, LocalDateTime date) {
         this.fileKey = fileKey;
         this.description = description;
-    }
-
-    public String getFileKey() {
-        return fileKey;
-    }
-
-    public void setFileKey(String fileKey) {
-        this.fileKey = fileKey;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
+        this.date=date;
     }
 
 }

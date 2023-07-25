@@ -15,7 +15,8 @@ public class FileUploadService {
     @Autowired(required = false)
     public String uploadFile(MultipartFile file) {
         String fileKey = generateFileKey();
-        String storageLocation = "E:/la/"; // 修改为实际存储文件的路径
+
+        String storageLocation = filepath.path;
 
         try {
             // 将文件保存在服务器上
@@ -33,7 +34,7 @@ public class FileUploadService {
 
     private String generateFileKey() {
         // 在这里生成一个唯一的文件key，可以使用UUID或其他方式生成
-        return UUID.randomUUID().toString();
+        return UUID.randomUUID().toString().replace("-","_");
     }
 
 }

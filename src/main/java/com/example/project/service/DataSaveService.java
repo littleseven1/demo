@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -21,7 +23,11 @@ public class DataSaveService {
     private final OrderMapper orderMapper;
     private final SkuMapper skuMapper;
     private final CommentMapper commentMapper;
-
+    ActionMapper.CreateTable createTable_action = new ActionMapper.CreateTable();
+    OverviewMapper.CreateTable createTable_overview=new OverviewMapper.CreateTable();
+    OrderMapper.CreateTable createTable_order=new OrderMapper.CreateTable();
+    SkuMapper.CreateTable createTable_sku=new SkuMapper.CreateTable();
+    CommentMapper.CreateTable createTable_comment=new CommentMapper.CreateTable();
     public DataSaveService(OverviewMapper overviewMapper, ActionMapper actionMapper,
                            OrderMapper orderMapper, SkuMapper skuMapper, CommentMapper commentMapper) {
         this.overviewMapper = overviewMapper;
@@ -32,13 +38,15 @@ public class DataSaveService {
     }
 
     public void SaveData(String fileKey, String fileDescription) {
-        Overview overview = new Overview(fileKey, fileDescription);
-        overviewMapper.addOverview(overview);
-        String filePath = "E:/la/" + fileKey;
+        LocalDateTime dateTime = LocalDateTime.now();
+        Overview overview = new Overview(fileKey,fileDescription,dateTime);
+        createTable_overview.DB(fileKey);
+        String tableName=fileKey+"_overview";
+        overviewMapper.addOverview(tableName,overview);
+        String filePath = filepath.path + fileKey;
         if (filePath == null) {
             throw new IllegalArgumentException("Error: File not found.");
         }
-
         try (FileInputStream fis = new FileInputStream(filePath);
              ZipInputStream zipInputStream = new ZipInputStream(fis)) {
 
@@ -80,7 +88,6 @@ public class DataSaveService {
         final int SKU_ID_INDEX = 1;
         final int DATE_INDEX = 2;
         final int NUM_INDEX = 3;
-
         for (Row row : sheet) {
             if (row.getRowNum() == 0) continue;
 
@@ -88,12 +95,13 @@ public class DataSaveService {
             Integer skuId = getCellValueAsInteger(row.getCell(SKU_ID_INDEX));
             Date date = getCellValueAsDate(row.getCell(DATE_INDEX));
             Integer num = getCellValueAsInteger(row.getCell(NUM_INDEX));
-
-            File.Action action = new File.Action(fileKey,userId, skuId,date,num);
-            actionMapper.addAction(action);
+            createTable_action.DB(fileKey);
+            File.Action action = new File.Action(userId, skuId,date,num);
+            String tableName=fileKey+"_action";
+            actionMapper.addAction(tableName,action);
         }
     }
-    private void processOrderSheet(Workbook workbook, String fileKey) {
+    private void processOrderSheet(Workbook workbook,String fileKey) {
         Sheet sheet = workbook.getSheetAt(0);
         final int USER_ID_INDEX = 0;
         final int SKU_ID_INDEX = 1;
@@ -110,12 +118,13 @@ public class DataSaveService {
             Date date = getCellValueAsDate(row.getCell(DATE_INDEX));
             Integer area = getCellValueAsInteger(row.getCell(AREA_INDEX));
             Integer num = getCellValueAsInteger(row.getCell(NUM_INDEX));
-
-            File.Order order = new File.Order(fileKey, userId, skuId, orderId, date, area, num);
-            orderMapper.addOrder(order);
+            createTable_order.DB(fileKey);
+            File.Order order = new File.Order(userId, skuId, orderId, date, area, num);
+            String tableName=fileKey+"_order";
+            orderMapper.addOrder(tableName,order);
         }
     }
-    private void processSkuSheet(Workbook workbook, String fileKey) {
+    private void processSkuSheet(Workbook workbook,String fileKey) {
         Sheet sheet = workbook.getSheetAt(0);
         final int SKU_ID_INDEX = 0;
         final int PRICE_INDEX = 1;
@@ -126,13 +135,14 @@ public class DataSaveService {
             Integer skuId = getCellValueAsInteger(row.getCell(SKU_ID_INDEX));
             Integer price = getCellValueAsInteger(row.getCell(PRICE_INDEX));
             Integer category = getCellValueAsInteger(row.getCell(CATE_INDEX));
-
-            File.Sku sku = new File.Sku(fileKey, skuId, price, category);
-            skuMapper.addSku(sku);
+            createTable_sku.DB(fileKey);
+            File.Sku sku = new File.Sku(skuId, price, category);
+            String tableName=fileKey+"_sku";
+            skuMapper.addSku(tableName,sku);
         }
     }
 
-    private void processCommentSheet(Workbook workbook, String fileKey) {
+    private void processCommentSheet(Workbook workbook,String fileKey) {
         Sheet sheet = workbook.getSheetAt(0);
         final int USER_ID_INDEX = 0;
         final int ORDER_ID_INDEX = 1;
@@ -144,9 +154,10 @@ public class DataSaveService {
             Integer userId = getCellValueAsInteger(row.getCell(USER_ID_INDEX));
             Integer orderId = getCellValueAsInteger(row.getCell(ORDER_ID_INDEX));
             Integer score = getCellValueAsInteger(row.getCell(SCORE_INDEX));
-
-            File.Comment comment = new File.Comment(fileKey, userId, orderId, score);
-            commentMapper.addComment(comment);
+            createTable_comment.DB(fileKey);
+            File.Comment comment = new File.Comment(userId, orderId, score);
+            String tableName=fileKey+"_comment";
+            commentMapper.addComment(tableName,comment);
         }
     }
 

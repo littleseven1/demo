@@ -19,7 +19,7 @@ public class FileProcessController {
 
     }
     @GetMapping("/getDetail")
-    public List<Map<String, Object>> getDetail(@RequestParam("fileKey") String fileKey) {
+    public List<Map<String, Object>> getDetail(@RequestParam("key") String fileKey) {
         return fileProcessService.processAndCheckFile(fileKey);
     }
 }

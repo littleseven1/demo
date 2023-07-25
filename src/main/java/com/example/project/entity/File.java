@@ -7,24 +7,17 @@ import java.util.List;
 public class File {
     // Action实体类
     public static class Action {
-        private String fileKey;
         private Integer user_id;
         private Integer sku_id;
         private Date date;
         private Integer num;
 
-        public Action(String fileKey, Integer userId, Integer skuId, Date date, Integer num) {
-            this.fileKey = fileKey;
+        public Action(Integer userId, Integer skuId, Date date, Integer num) {
             this.user_id = userId;
             this.sku_id = skuId;
             this.date = date;
             this.num = num;
         }
-
-        public String getFileKey() {return fileKey;}
-
-        public void setFileKey(String fileKey) {this.fileKey = fileKey;}
-
         public Integer getUser_id() {
             return user_id;
         }
@@ -60,7 +53,6 @@ public class File {
 
     // Order实体类
     public static class Order {
-        private String fileKey;
         private Integer user_id;
         private Integer sku_id;
         private Integer o_id;
@@ -68,8 +60,7 @@ public class File {
         private Integer area;
         private Integer num;
 
-        public Order(String fileKey, Integer userId, Integer skuId, Integer orderId, Date date, Integer area, Integer num) {
-            this.fileKey = fileKey;
+        public Order(Integer userId, Integer skuId, Integer orderId, Date date, Integer area, Integer num) {
             this.user_id = userId;
             this.sku_id = skuId;
             this.o_id = orderId;
@@ -77,10 +68,6 @@ public class File {
             this.area = area;
             this.num = num;
         }
-
-        public String getFileKey() {return fileKey;}
-
-        public void setFileKey(String fileKey) {this.fileKey = fileKey;}
 
         public Integer getUser_id() {
             return user_id;
@@ -133,22 +120,15 @@ public class File {
 
     // Sku实体类
     public static class Sku {
-        private String fileKey;
         private Integer sku_id;
         private Integer price;
         private Integer cate;
 
-        public Sku(String fileKey, Integer skuId, Integer price, Integer category) {
-            this.fileKey = fileKey;
+        public Sku(Integer skuId, Integer price, Integer category) {
             this.sku_id = skuId;
             this.price = price;
             this.cate = category;
         }
-
-
-        public String getFileKey() {return fileKey;}
-
-        public void setFileKey(String fileKey) {this.fileKey = fileKey;}
 
         public Integer getSku_id() {
             return sku_id;
@@ -178,21 +158,15 @@ public class File {
 
     // Comment实体类
     public static class Comment {
-        private String fileKey;
         private Integer user_id;
         private Integer o_id;
         private Integer score;
 
-        public Comment(String fileKey, Integer userId, Integer orderId, Integer score) {
-            this.fileKey = fileKey;
+        public Comment(Integer userId, Integer orderId, Integer score) {
             this.user_id = userId;
             this.o_id = orderId;
             this.score = score;
         }
-
-        public String getFileKey() {return fileKey;}
-
-        public void setFileKey(String fileKey) {this.fileKey = fileKey;}
 
         public Integer getUser_id() {
             return user_id;
