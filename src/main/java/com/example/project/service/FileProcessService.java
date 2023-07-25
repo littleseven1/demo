@@ -1,6 +1,6 @@
 package com.example.project.service;
 
-import com.example.project.entity.File;
+
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -78,7 +78,6 @@ public class FileProcessService {
     private void processActionSheet(Workbook workbook, Map<String, Object> errorMap) {
         errorMap.put("isExist", true);
         Sheet sheet = workbook.getSheetAt(0);
-        List<File.Action> actions = new ArrayList<>();
         final int USER_ID_INDEX = 0;
         final int SKU_ID_INDEX = 1;
         final int DATE_INDEX = 2;
@@ -164,8 +163,6 @@ public class FileProcessService {
                 }
             }
 
-            File.Action action = new File.Action(userId, skuId, date, num);
-            actions.add(action);
         }
         errorMap.put("columns", columns);
         errorMap.put("columnsNan", columnsNan);
@@ -175,7 +172,6 @@ public class FileProcessService {
     private void processOrderSheet(Workbook workbook, Map<String, Object> errorMap) {
         errorMap.put("isExist", true);
         Sheet sheet = workbook.getSheetAt(0);
-        List<File.Order> orders = new ArrayList<>();
         final int USER_ID_INDEX = 0;
         final int SKU_ID_INDEX = 1;
         final int ORDER_ID_INDEX = 2;
@@ -275,9 +271,6 @@ public class FileProcessService {
                     }
                 }
             }
-
-            File.Order order = new File.Order(userId, skuId, orderId, date, area, num);
-            orders.add(order);
         }
         errorMap.put("columns", columns);
         errorMap.put("columnsNan", columnsNan);
@@ -287,7 +280,6 @@ public class FileProcessService {
     private void processSkuSheet(Workbook workbook, Map<String, Object> errorMap) {
         errorMap.put("isExist", true);
         Sheet sheet = workbook.getSheetAt(0);
-        List<File.Sku> skus = new ArrayList<>();
         final int SKU_ID_INDEX = 0;
         final int PRICE_INDEX = 1;
         final int CATE_INDEX = 2;
@@ -346,8 +338,6 @@ public class FileProcessService {
                 }
             }
 
-            File.Sku sku = new File.Sku(skuId, price, category);
-            skus.add(sku);
         }
 
         errorMap.put("columns", columns);
@@ -358,7 +348,6 @@ public class FileProcessService {
     private void processCommentSheet(Workbook workbook, Map<String, Object> errorMap) {
         errorMap.put("isExist", true);
         Sheet sheet = workbook.getSheetAt(0);
-        List<File.Comment> comments = new ArrayList<>();
         final int USER_ID_INDEX = 0;
         final int ORDER_ID_INDEX = 1;
         final int SCORE_INDEX = 2;
@@ -417,8 +406,6 @@ public class FileProcessService {
                 }
             }
 
-            File.Comment comment = new File.Comment(userId, orderId, score);
-            comments.add(comment);
         }
 
         errorMap.put("columns", columns);

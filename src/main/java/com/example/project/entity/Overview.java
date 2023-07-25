@@ -9,20 +9,13 @@ import javax.persistence.Id;
 public class Overview {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     private String fileKey;
 
     private String description;
 
-    private int flag;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public Overview(String fileKey, String description) {
+        this.fileKey = fileKey;
+        this.description = description;
     }
 
     public String getFileKey() {
@@ -41,11 +34,4 @@ public class Overview {
         this.description = description;
     }
 
-    public int getFlag() {
-        return flag;
-    }
-
-    public void setFlag(int flag) {
-        this.flag = flag;
-    }
 }

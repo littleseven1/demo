@@ -1,57 +1,91 @@
 package com.example.project.service;
 
 import com.example.project.entity.File;
-import com.example.project.mapper.ActionMapper;
-import com.example.project.mapper.CommentMapper;
-import com.example.project.mapper.OrderMapper;
-import com.example.project.mapper.SkuMapper;
+import com.example.project.entity.Overview;
+import com.example.project.mapper.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 @Service
 public class DataSaveService {
 
-    private ActionMapper actionMapper;
-    private OrderMapper orderMapper;
-    private SkuMapper skuMapper;
-    private CommentMapper commentMapper;
+    private final ActionMapper actionMapper;
+    private final OrderMapper orderMapper;
+    private final SkuMapper skuMapper;
+    private final CommentMapper commentMapper;
+    private final OverviewMapper overviewMapper;
 
     @Autowired
-    public DataSaveService(ActionMapper actionMapper,
-                           OrderMapper orderMapper,
-                           SkuMapper skuMapper,
-                           CommentMapper commentMapper) {
+    public DataSaveService(ActionMapper actionMapper, OrderMapper orderMapper, SkuMapper skuMapper, CommentMapper commentMapper, OverviewMapper overviewMapper) {
         this.actionMapper = actionMapper;
         this.orderMapper = orderMapper;
         this.skuMapper = skuMapper;
         this.commentMapper = commentMapper;
+        this.overviewMapper = overviewMapper;
     }
 
-    public void saveDataToDatabase() {
-        // 从之前的处理结果获取数据
-        List<File.Action> actions = File.getActionList();
-        List<File.Order> orders = File.getOrderList();
-        List<File.Sku> skus = File.getSkuList();
-        List<File.Comment> comments = File.getCommentList();
+    public void SaveData(String fileKey, String fileDescription) {
 
-        // 将数据插入数据库
-        for (File.Action action : actions) {
+        Overview overview = new Overview(fileKey, fileDescription);
+        overviewMapper.addOverview(overview);
 
-            actionMapper.insertAction(action);
+        String zipFilePath = "E:/la/" + fileKey;
+        String unzipFolderPath = "E:/la/unzipped/" + fileKey + "/";
+        unzipFiles(zipFilePath, unzipFolderPath);
+
+        // Process each excel file
+        processActionExcel(unzipFolderPath + fileKey + "_action.xlsx");
+        processOrderExcel(unzipFolderPath + fileKey + "_order.xlsx");
+        processSkuExcel(unzipFolderPath + fileKey + "_sku.xlsx");
+        processCommentExcel(unzipFolderPath + fileKey + "_comment.xlsx");
+    }
+
+    private void unzipFiles(String zipFilePath, String unzipFolderPath) {
+        try {
+            byte[] buffer = new byte[1024];
+            ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(zipFilePath));
+            ZipEntry zipEntry = zipInputStream.getNextEntry();
+            while (zipEntry != null) {
+                String fileName = zipEntry.getName();
+                File newFile = new File(unzipFolderPath + fileName);
+                FileOutputStream fileOutputStream = new FileOutputStream(newFile);
+                int len;
+                while ((len = zipInputStream.read(buffer)) > 0) {
+                    fileOutputStream.write(buffer, 0, len);
+                }
+                fileOutputStream.close();
+                zipEntry = zipInputStream.getNextEntry();
+            }
+            zipInputStream.closeEntry();
+            zipInputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
 
-        for (File.Order order : orders) {
-            orderMapper.insertOrder(order);
-        }
+    private void processActionExcel(String filePath) {
+        // TODO: Implement the logic to read the excel file and save data to the action table
+        // You can use Apache POI or other libraries to read Excel files
+    }
 
-        for (File.Sku sku : skus) {
-            skuMapper.insertSku(sku);
-        }
+    private void processOrderExcel(String filePath) {
+        // TODO: Implement the logic to read the excel file and save data to the order table
+        // You can use Apache POI or other libraries to read Excel files
+    }
 
-        for (File.Comment comment : comments) {
-            commentMapper.insertComment(comment);
-        }
+    private void processSkuExcel(String filePath) {
+        // TODO: Implement the logic to read the excel file and save data to the sku table
+        // You can use Apache POI or other libraries to read Excel files
+    }
+
+    private void processCommentExcel(String filePath) {
+        // TODO: Implement the logic to read the excel file and save data to the comment table
+        // You can use Apache POI or other libraries to read Excel files
     }
 }
