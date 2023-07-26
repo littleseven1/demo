@@ -1,4 +1,5 @@
 package com.example.project.service;
+import jakarta.websocket.Session;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -104,57 +105,57 @@ public class FileProcessService {
         for (Row row : sheet) {
             if (row.getRowNum() == 0) continue;
             errorMap.put("isEmpty", false);
-            Integer userId = getCellValueAsInteger(row.getCell(USER_ID_INDEX));
-            Integer skuId = getCellValueAsInteger(row.getCell(SKU_ID_INDEX));
-            Date date = getCellValueAsDate(row.getCell(DATE_INDEX));
-            Integer num = getCellValueAsInteger(row.getCell(NUM_INDEX));
+            Cell userId = row.getCell(USER_ID_INDEX);
+            Cell skuId = row.getCell(SKU_ID_INDEX);
+            Cell date = row.getCell(DATE_INDEX);
+            Cell num =row.getCell(NUM_INDEX);
             if (headerRow.getCell(USER_ID_INDEX) != null) {
-                if (userId == null)
+                if (userId == null&&!columnsNan.contains("user_id"))
                 {
                     columnsNan.add("user_id");
                 }
                 else
                 {
-                    if (!isValidDataType(userId, Integer.class))
+                    if (userId.getCellType()!=CellType.NUMERIC&&!dataType.contains("user_id"))
                     {
                         dataType.add("user_id");
                     }
                 }
             }
             if (headerRow.getCell(SKU_ID_INDEX) != null) {
-                if (skuId == null)
+                if (skuId == null&&!columnsNan.contains("sku_id"))
                 {
                     columnsNan.add("sku_id");
                 }
                 else
                 {
-                    if(!isValidDataType(skuId, Integer.class))
+                    if(skuId.getCellType()!=CellType.NUMERIC&&!dataType.contains("sku_id"))
                     {
                         dataType.add("sku_id");
                     }
                 }
             }
             if (headerRow.getCell(DATE_INDEX) != null) {
-                if (date == null)
+                if (date == null&&!columnsNan.contains("date"))
                 {
                     columnsNan.add("date");
                 }
                 else
                 {
-                    if (!isValidDataType(date, Date.class)) {
+                    if (!(date.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(date))&&!dataType.contains("date")) {
                         dataType.add("date");
                     }
                 }
             }
             if (headerRow.getCell(NUM_INDEX) != null) {
 
-                if (num == null)
+                if (num == null&&!columnsNan.contains("num"))
                 {
                     columnsNan.add("num");
                 }
                 else
                 {
-                    if (!isValidDataType(num, Integer.class)) {
+                    if (num.getCellType()!=CellType.NUMERIC&&!dataType.contains("num")) {
                         dataType.add("num");
                     }
                 }
@@ -207,63 +208,63 @@ public class FileProcessService {
         for (Row row : sheet) {
             if (row.getRowNum() == 0) continue;
             errorMap.put("isEmpty", false);
-            Integer userId = getCellValueAsInteger(row.getCell(USER_ID_INDEX));
-            Integer skuId = getCellValueAsInteger(row.getCell(SKU_ID_INDEX));
-            Integer orderId = getCellValueAsInteger(row.getCell(ORDER_ID_INDEX));
-            Date date = getCellValueAsDate(row.getCell(DATE_INDEX));
-            Integer area = getCellValueAsInteger(row.getCell(AREA_INDEX));
-            Integer num = getCellValueAsInteger(row.getCell(NUM_INDEX));
+            Cell userId = row.getCell(USER_ID_INDEX);
+            Cell skuId = row.getCell(SKU_ID_INDEX);
+            Cell orderId = row.getCell(ORDER_ID_INDEX);
+            Cell date =row.getCell(DATE_INDEX);
+            Cell area =row.getCell(AREA_INDEX);
+            Cell num = row.getCell(NUM_INDEX);
 
             if (headerRow.getCell(USER_ID_INDEX) != null) {
-                if (userId == null) {
+                if (userId == null&&!columnsNan.contains("user_id")) {
                     columnsNan.add("user_id");
                 } else {
-                    if (!isValidDataType(userId, Integer.class)) {
+                    if (userId.getCellType()!=CellType.NUMERIC&&!dataType.contains("user_id")) {
                         dataType.add("user_id");
                     }
                 }
             }
             if (headerRow.getCell(SKU_ID_INDEX) != null) {
-                if (skuId == null) {
+                if (skuId == null&&!columnsNan.contains("sku_id")) {
                     columnsNan.add("sku_id");
                 } else {
-                    if (!isValidDataType(skuId, Integer.class)) {
+                    if (skuId.getCellType()!=CellType.NUMERIC&&!dataType.contains("sku_id")) {
                         dataType.add("sku_id");
                     }
                 }
             }
             if (headerRow.getCell(ORDER_ID_INDEX) != null) {
-                if (orderId == null) {
+                if (orderId == null&&!columnsNan.contains("o_id")) {
                     columnsNan.add("o_id");
                 } else {
-                    if (!isValidDataType(orderId, Integer.class)) {
+                    if (orderId.getCellType()!=CellType.NUMERIC&&!dataType.contains("o_id")) {
                         dataType.add("o_id");
                     }
                 }
             }
             if (headerRow.getCell(DATE_INDEX) != null) {
-                if (date == null) {
+                if (date == null&&!columnsNan.contains("date")) {
                     columnsNan.add("date");
                 } else {
-                    if (!isValidDataType(date, Date.class)) {
+                    if (!(date.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(date))&&!dataType.contains("date")) {
                         dataType.add("date");
                     }
                 }
             }
             if (headerRow.getCell(AREA_INDEX) != null) {
-                if (area == null) {
+                if (area == null&&!columnsNan.contains("area")) {
                     columnsNan.add("area");
                 } else {
-                    if (!isValidDataType(area, Integer.class)) {
+                    if (area.getCellType()!=CellType.NUMERIC&&!dataType.contains("area")) {
                         dataType.add("area");
                     }
                 }
             }
             if (headerRow.getCell(NUM_INDEX) != null) {
-                if (num == null) {
+                if (num == null&&!columnsNan.contains("num")) {
                     columnsNan.add("num");
                 } else {
-                    if (!isValidDataType(num, Integer.class)) {
+                    if (num.getCellType()!=CellType.NUMERIC&&!dataType.contains("num")) {
                         dataType.add("num");
                     }
                 }
@@ -303,33 +304,33 @@ public class FileProcessService {
         for (Row row : sheet) {
             if (row.getRowNum() == 0) continue;
             errorMap.put("isEmpty", false);
-            Integer skuId = getCellValueAsInteger(row.getCell(SKU_ID_INDEX));
-            Integer price = getCellValueAsInteger(row.getCell(PRICE_INDEX));
-            Integer category = getCellValueAsInteger(row.getCell(CATE_INDEX));
+            Cell skuId = row.getCell(SKU_ID_INDEX);
+            Cell price = row.getCell(PRICE_INDEX);
+            Cell category = row.getCell(CATE_INDEX);
 
             if (headerRow.getCell(SKU_ID_INDEX) != null) {
-                if (skuId == null) {
+                if (skuId == null&&!columnsNan.contains("sku_id")) {
                     columnsNan.add("sku_id");
                 } else {
-                    if (!isValidDataType(skuId, Integer.class)) {
+                    if (skuId.getCellType()!=CellType.NUMERIC&&!dataType.contains("sku_id")) {
                         dataType.add("sku_id");
                     }
                 }
             }
             if (headerRow.getCell(PRICE_INDEX) != null) {
-                if (price == null) {
+                if (price == null&&!columnsNan.contains("price")) {
                     columnsNan.add("price");
                 } else {
-                    if (!isValidDataType(price, Integer.class)) {
+                    if (price.getCellType()!=CellType.NUMERIC&&!dataType.contains("price")) {
                         dataType.add("price");
                     }
                 }
             }
             if (headerRow.getCell(CATE_INDEX) != null) {
-                if (category == null) {
+                if (category == null&&!columnsNan.contains("cate")) {
                     columnsNan.add("cate");
                 } else {
-                    if (!isValidDataType(category, Integer.class)) {
+                    if (category.getCellType()!=CellType.NUMERIC&&!dataType.contains("cate")) {
                         dataType.add("cate");
                     }
                 }
@@ -371,33 +372,33 @@ public class FileProcessService {
         for (Row row : sheet) {
             if (row.getRowNum() == 0) continue;
             errorMap.put("isEmpty", false);
-            Integer userId = getCellValueAsInteger(row.getCell(USER_ID_INDEX));
-            Integer orderId = getCellValueAsInteger(row.getCell(ORDER_ID_INDEX));
-            Integer score = getCellValueAsInteger(row.getCell(SCORE_INDEX));
+            Cell userId = row.getCell(USER_ID_INDEX);
+            Cell orderId = row.getCell(ORDER_ID_INDEX);
+            Cell score = row.getCell(SCORE_INDEX);
 
             if (headerRow.getCell(USER_ID_INDEX) != null) {
-                if (userId == null) {
+                if (userId == null&&!columnsNan.contains("user_id")) {
                     columnsNan.add("user_id");
                 } else {
-                    if (!isValidDataType(userId, Integer.class)) {
+                    if (userId.getCellType()!=CellType.NUMERIC&&!dataType.contains("user_id")) {
                         dataType.add("user_id");
                     }
                 }
             }
             if (headerRow.getCell(ORDER_ID_INDEX) != null) {
-                if (orderId == null) {
+                if (orderId == null&&!columnsNan.contains("o_id")) {
                     columnsNan.add("o_id");
                 } else {
-                    if (!isValidDataType(orderId, Integer.class)) {
+                    if (orderId.getCellType()!=CellType.NUMERIC&&!dataType.contains("o_id")) {
                         dataType.add("o_id");
                     }
                 }
             }
             if (headerRow.getCell(SCORE_INDEX) != null) {
-                if (score == null) {
+                if (score == null&&!columnsNan.contains("score")) {
                     columnsNan.add("score");
                 } else {
-                    if (!isValidDataType(score, Integer.class)) {
+                    if (score.getCellType()!=CellType.NUMERIC&&!dataType.contains("score")) {
                         dataType.add("score");
                     }
                 }
@@ -420,35 +421,4 @@ public class FileProcessService {
         errorMap.put("dataType", dataType);
         return errorMap;
     }
-
-    private Integer getCellValueAsInteger(Cell cell) {
-        if (cell == null) {
-            return null;
-        }
-
-        CellType cellType = cell.getCellType();
-        if (cellType == CellType.NUMERIC) {
-            return (int) cell.getNumericCellValue();
-        } else {
-            return null;
-        }
-    }
-
-    private Date getCellValueAsDate(Cell cell) {
-        if (cell == null) {
-            return null;
-        }
-
-        CellType cellType = cell.getCellType();
-        if (cellType == CellType.NUMERIC) {
-            return cell.getDateCellValue();
-        } else {
-            return null;
-        }
-    }
-
-    private boolean isValidDataType(Object value, Class<?> dataType) {
-        return dataType.isInstance(value);
-    }
-
 }
