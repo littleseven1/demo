@@ -18,7 +18,7 @@ public interface SkuMapper {
             try (Connection connection = DriverManager.getConnection(url, database.username, database.password);
                  Statement statement = connection.createStatement()) {
 
-                String tableName =fileKey+ "_sku";
+                String tableName ="sku_"+fileKey ;
 
                 String createTableSQL = "CREATE TABLE IF NOT EXISTS " + tableName + "(" +
                         "sku_id INT NOT NULL," +

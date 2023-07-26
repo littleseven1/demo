@@ -19,7 +19,7 @@ public interface ActionMapper {
             try (Connection connection = DriverManager.getConnection(url, database.username, database.password);
                  Statement statement = connection.createStatement()) {
 
-                String tableName = fileKey + "_action";
+                String tableName ="action_" +fileKey  ;
 
                 String createTableSQL = "CREATE TABLE IF NOT EXISTS " + tableName + " (" +
                         "user_id INT NOT NULL," +

@@ -93,7 +93,7 @@ public class DataSaveService {
             Date date = getCellValueAsDate(row.getCell(DATE_INDEX));
             Integer num = getCellValueAsInteger(row.getCell(NUM_INDEX));
             createTable_action.DB(fileKey);
-            String tableName=fileKey+"_action";
+            String tableName="action_"+fileKey;
             actionMapper.addAction(tableName,userId, skuId,date,num);
         }
     }
@@ -115,7 +115,7 @@ public class DataSaveService {
             Integer area = getCellValueAsInteger(row.getCell(AREA_INDEX));
             Integer num = getCellValueAsInteger(row.getCell(NUM_INDEX));
             createTable_order.DB(fileKey);
-            String tableName=fileKey+"_order";
+            String tableName="order_"+fileKey;
             orderMapper.addOrder(tableName,userId, skuId, orderId, date, area, num);
         }
     }
@@ -131,7 +131,7 @@ public class DataSaveService {
             Integer price = getCellValueAsInteger(row.getCell(PRICE_INDEX));
             Integer category = getCellValueAsInteger(row.getCell(CATE_INDEX));
             createTable_sku.DB(fileKey);
-            String tableName=fileKey+"_sku";
+            String tableName="sku_"+fileKey;
             skuMapper.addSku(tableName,skuId, price, category);
         }
     }
@@ -149,7 +149,7 @@ public class DataSaveService {
             Integer orderId = getCellValueAsInteger(row.getCell(ORDER_ID_INDEX));
             Integer score = getCellValueAsInteger(row.getCell(SCORE_INDEX));
             createTable_comment.DB(fileKey);
-            String tableName=fileKey+"_comment";
+            String tableName="comment_"+fileKey;
             commentMapper.addComment(tableName,userId, orderId, score);
         }
     }
