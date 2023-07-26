@@ -20,7 +20,6 @@ public interface ActionMapper {
                  Statement statement = connection.createStatement()) {
 
                 String tableName = fileKey + "_action";
-                System.out.print(tableName);
 
                 String createTableSQL = "CREATE TABLE IF NOT EXISTS " + tableName + " (" +
                         "user_id INT NOT NULL," +

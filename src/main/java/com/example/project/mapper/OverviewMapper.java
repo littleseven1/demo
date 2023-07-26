@@ -15,12 +15,11 @@ public interface OverviewMapper {
     class CreateTable{
         String url = "jdbc:mysql://localhost:3306/mydatabase";
 
-        public void DB(String fileKey){
+        public void DB(){
             try (Connection connection = DriverManager.getConnection(url, database.username, database.password);
                  Statement statement = connection.createStatement()) {
 
-                String tableName =fileKey+ "_overview";
-                String createTableSQL = "CREATE TABLE IF NOT EXISTS " + tableName + " (" +
+                String createTableSQL = "CREATE TABLE IF NOT EXISTS " + "overview" + " (" +
                         "fileKey VARCHAR(255) PRIMARY KEY,  " +
                         "description VARCHAR(255) NOT NULL," +
                         "date datetime NOT NULL," +
@@ -33,6 +32,6 @@ public interface OverviewMapper {
             }
         }
     }
-    @Insert("INSERT INTO ${tableName} (fileKey, description,date) VALUES (#{overview.fileKey}, #{overview.description},#{overview.date})")
-    void addOverview(String tableName, Overview overview);
+    @Insert("INSERT INTO overview (fileKey, description,date) VALUES (#{fileKey}, #{description},#{date})")
+    void addOverview(Overview overview);
 }

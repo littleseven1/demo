@@ -40,9 +40,8 @@ public class DataSaveService {
     public void SaveData(String fileKey, String fileDescription) {
         LocalDateTime dateTime = LocalDateTime.now();
         Overview overview = new Overview(fileKey,fileDescription,dateTime);
-        createTable_overview.DB(fileKey);
-        String tableName=fileKey+"_overview";
-        overviewMapper.addOverview(tableName,overview);
+        createTable_overview.DB();
+        overviewMapper.addOverview(overview);
         String filePath = filepath.path + fileKey;
         if (filePath == null) {
             throw new IllegalArgumentException("Error: File not found.");
