@@ -97,7 +97,7 @@ public class DataSaveService {
             createTable_action.DB(fileKey);
             File.Action action = new File.Action(userId, skuId,date,num);
             String tableName=fileKey+"_action";
-            actionMapper.addAction(tableName,action);
+            actionMapper.addAction(tableName,userId, skuId,date,num);
         }
     }
     private void processOrderSheet(Workbook workbook,String fileKey) {

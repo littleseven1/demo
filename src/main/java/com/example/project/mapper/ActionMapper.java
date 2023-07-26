@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Date;
 
 @Mapper
 public interface ActionMapper {
@@ -36,6 +37,6 @@ public interface ActionMapper {
         }
     }
 
-    @Insert("INSERT INTO ${tableName} (user_id, sku_id, date, num)"+" VALUES (#{action.user_id}, #{action.sku_id}, #{action.date}, #{action.num})")
-    void addAction(String tableName, File.Action action);
+    @Insert("INSERT INTO ${tableName} (user_id, sku_id, date, num)"+" VALUES (#{user_id}, #{sku_id}, #{date}, #{num})")
+    void addAction(String tableName, Integer userId, Integer skuId, Date date, Integer num);
 }
