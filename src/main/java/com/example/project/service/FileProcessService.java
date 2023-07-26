@@ -1,5 +1,5 @@
 package com.example.project.service;
-import jakarta.websocket.Session;
+
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,18 +38,10 @@ public class FileProcessService {
                             Workbook workbook = WorkbookFactory.create(zipInputStream);
 
                             switch (entryName) {
-                                case "action.xlsx":
-                                    processActionSheet(workbook, errorMap);
-                                    break;
-                                case "order.xlsx":
-                                    processOrderSheet(workbook, errorMap);
-                                    break;
-                                case "sku.xlsx":
-                                    processSkuSheet(workbook, errorMap);
-                                    break;
-                                case "comment.xlsx":
-                                    processCommentSheet(workbook, errorMap);
-                                    break;
+                                case "action.xlsx" -> processActionSheet(workbook, errorMap);
+                                case "order.xlsx" -> processOrderSheet(workbook, errorMap);
+                                case "sku.xlsx" -> processSkuSheet(workbook, errorMap);
+                                case "comment.xlsx" -> processCommentSheet(workbook, errorMap);
                             }
                             break;
                         }
