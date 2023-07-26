@@ -1,8 +1,9 @@
 package com.example.project.mapper;
 
-import com.example.project.entity.File;
+
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -34,6 +35,6 @@ public interface CommentMapper {
         }
     }
     @Insert("INSERT INTO ${tableName} (user_id, o_id, score) " +
-            "VALUES (#{comment.user_id}, #{comment.o_id}, #{comment.score})")
-    void addComment(String tableName, File.Comment comment);
+            "VALUES (#{user_id}, #{o_id}, #{score})")
+    void addComment(@Param("tableName")String tableName,@Param("user_id") Integer user_id, @Param("o_id")Integer o_id, @Param("score")Integer score);
 }

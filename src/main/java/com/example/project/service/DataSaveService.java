@@ -1,5 +1,5 @@
 package com.example.project.service;
-import com.example.project.entity.File;
+
 import com.example.project.entity.Overview;
 import com.example.project.mapper.*;
 import org.apache.poi.ss.usermodel.*;
@@ -8,10 +8,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Date;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -95,7 +93,6 @@ public class DataSaveService {
             Date date = getCellValueAsDate(row.getCell(DATE_INDEX));
             Integer num = getCellValueAsInteger(row.getCell(NUM_INDEX));
             createTable_action.DB(fileKey);
-            File.Action action = new File.Action(userId, skuId,date,num);
             String tableName=fileKey+"_action";
             actionMapper.addAction(tableName,userId, skuId,date,num);
         }
@@ -118,9 +115,8 @@ public class DataSaveService {
             Integer area = getCellValueAsInteger(row.getCell(AREA_INDEX));
             Integer num = getCellValueAsInteger(row.getCell(NUM_INDEX));
             createTable_order.DB(fileKey);
-            File.Order order = new File.Order(userId, skuId, orderId, date, area, num);
             String tableName=fileKey+"_order";
-            orderMapper.addOrder(tableName,order);
+            orderMapper.addOrder(tableName,userId, skuId, orderId, date, area, num);
         }
     }
     private void processSkuSheet(Workbook workbook,String fileKey) {
@@ -135,9 +131,8 @@ public class DataSaveService {
             Integer price = getCellValueAsInteger(row.getCell(PRICE_INDEX));
             Integer category = getCellValueAsInteger(row.getCell(CATE_INDEX));
             createTable_sku.DB(fileKey);
-            File.Sku sku = new File.Sku(skuId, price, category);
             String tableName=fileKey+"_sku";
-            skuMapper.addSku(tableName,sku);
+            skuMapper.addSku(tableName,skuId, price, category);
         }
     }
 
@@ -154,9 +149,8 @@ public class DataSaveService {
             Integer orderId = getCellValueAsInteger(row.getCell(ORDER_ID_INDEX));
             Integer score = getCellValueAsInteger(row.getCell(SCORE_INDEX));
             createTable_comment.DB(fileKey);
-            File.Comment comment = new File.Comment(userId, orderId, score);
             String tableName=fileKey+"_comment";
-            commentMapper.addComment(tableName,comment);
+            commentMapper.addComment(tableName,userId, orderId, score);
         }
     }
 

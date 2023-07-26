@@ -1,8 +1,7 @@
 package com.example.project.mapper;
-
-import com.example.project.entity.File;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -38,5 +37,5 @@ public interface ActionMapper {
     }
 
     @Insert("INSERT INTO ${tableName} (user_id, sku_id, date, num)"+" VALUES (#{user_id}, #{sku_id}, #{date}, #{num})")
-    void addAction(String tableName, Integer userId, Integer skuId, Date date, Integer num);
+    void addAction(@Param("tableName") String tableName,@Param("user_id") Integer user_id,@Param("sku_id") Integer sku_id, @Param("date") Date date,@Param("num") Integer num);
 }

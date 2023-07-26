@@ -1,8 +1,8 @@
 package com.example.project.mapper;
 
-import com.example.project.entity.File;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -33,7 +33,7 @@ public interface SkuMapper {
             }
         }
     }
-    @Insert("INSERT INTO ${tableName} (sku_id, price, cate) VALUES (#{sku.sku_id}, #{sku.price}, #{sku.cate})")
-    void addSku(String tableName, File.Sku sku);
+    @Insert("INSERT INTO ${tableName} (sku_id, price, cate) VALUES (#{sku_id}, #{price}, #{cate})")
+    void addSku(@Param("tableName")String tableName,@Param("sku_id") Integer sku_id, @Param("price")Integer price, @Param("cate")Integer cate);
 
 }

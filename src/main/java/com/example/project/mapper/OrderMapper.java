@@ -1,13 +1,14 @@
 package com.example.project.mapper;
 
-import com.example.project.entity.File;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Date;
 
 @Mapper
 public interface OrderMapper {
@@ -37,7 +38,7 @@ public interface OrderMapper {
         }
     }
     @Insert("INSERT INTO ${tableName} (user_id, sku_id, o_id, date, area, num) " +
-            "VALUES (#{order.user_id}, #{order.sku_id}, #{order.o_id}, #{order.date}, #{order.area}, #{order.num})")
-    void addOrder(String tableName, File.Order order);
+            "VALUES (#{user_id}, #{sku_id}, #{o_id}, #{date}, #{area}, #{num})")
+    void addOrder(@Param("tableName")String tableName, @Param("user_id")Integer user_id, @Param("sku_id")Integer sku_id,@Param("o_id") Integer o_id, @Param("date")Date date,@Param("area") Integer area, @Param("num")Integer num);
 
 }
