@@ -9,7 +9,7 @@ public class DataSaveController {
     private DataSaveService dataSaveService;
 
     @PostMapping("/saveData")
-    public void uploadFile(@RequestParam("key") String fileKey, @RequestParam("description") String fileDescription) {
+    public void saveData(@RequestParam("key") String fileKey, @RequestParam("description") String fileDescription) {
         dataSaveService.SaveData(fileKey, fileDescription);
     }
 }

@@ -11,13 +11,9 @@ import java.util.Map;
 
 @RestController
 public class FileProcessController {
-
-    private FileProcessService fileProcessService;
     @Autowired
-    public FileProcessController(FileProcessService fileProcessService) {
-        this.fileProcessService = fileProcessService;
+    private FileProcessService fileProcessService;
 
-    }
     @GetMapping("/getDetail")
     public List<Map<String, Object>> getDetail(@RequestParam("key") String fileKey) {
         return fileProcessService.processAndCheckFile(fileKey);
