@@ -35,6 +35,6 @@ public interface SkuMapper {
         }
     }
     @Insert("INSERT INTO ${tableName} (iindex,sku_id, price, cate,cateName) VALUES (#{iindex},#{sku_id}, #{price}, #{cate},#{cateName})")
-    void addSku(@Param("tableName")String tableName,@Param("iindex") Integer iindex,@Param("sku_id") Integer sku_id, @Param("price")Integer price, @Param("cate")Integer cate,@Param("cateName")String cateName);
+    void addSku(@Param("tableName")String tableName,@Param("iindex") Integer iindex,@Param("sku_id") Integer sku_id, @Param("price")double price, @Param("cate")Integer cate,@Param("cateName")String cateName);
 
 }
