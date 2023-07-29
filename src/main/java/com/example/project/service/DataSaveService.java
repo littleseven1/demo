@@ -379,7 +379,8 @@ public class DataSaveService {
             for (CSVRecord record : records) {
                 Integer iidex=Integer.parseInt(record.get(0));
                 Integer skuId =SKU_ID_INDEX!=-1?Integer.parseInt(record.get(SKU_ID_INDEX)):null;
-                Integer price =PRICE_INDEX!=-1?Integer.parseInt(record.get(PRICE_INDEX)):null;
+                double pricey =PRICE_INDEX!=-1?Double.parseDouble(record.get(PRICE_INDEX)):null;
+                Integer price=(int)pricey;
                 Integer category =CATE_INDEX!=-1?Integer.parseInt(record.get(CATE_INDEX)):null;
                 String cateName = CATENAME_INDEX != -1 ? record.get(CATENAME_INDEX) : null;
                 createTable_sku.DB(fileKey);
