@@ -22,13 +22,16 @@ public interface OrderMapper {
                 String tableName ="order_"+fileKey;
 
                 String createTableSQL = "CREATE TABLE IF NOT EXISTS " + tableName + " (" +
+                        "iindex INT PRIMARY KEY," +
                         "user_id INT NOT NULL," +
+                        "userName VARCHAR(255) NOT NULL," +
                         "sku_id INT NOT NULL," +
                         "o_id INT NOT NULL," +
                         "date DATE NOT NULL," +
                         "area INT NOT NULL," +
+                        "areaName VARCHAR(255) NOT NULL," +
                         "num INT NOT NULL," +
-                        "PRIMARY KEY (user_id, sku_id, o_id,date,area,num)"+
+                        "payType VARCHAR(255) NOT NULL" +
                         ")" ;
 
                 statement.executeUpdate(createTableSQL);
@@ -37,8 +40,8 @@ public interface OrderMapper {
             }
         }
     }
-    @Insert("INSERT INTO ${tableName} (user_id, sku_id, o_id, date, area, num) " +
-            "VALUES (#{user_id}, #{sku_id}, #{o_id}, #{date}, #{area}, #{num})")
-    void addOrder(@Param("tableName")String tableName, @Param("user_id")Integer user_id, @Param("sku_id")Integer sku_id,@Param("o_id") Integer o_id, @Param("date")Date date,@Param("area") Integer area, @Param("num")Integer num);
+    @Insert("INSERT INTO ${tableName} (iindex,user_id,userName sku_id, o_id, date, area,areaName,num,payType) " +
+            "VALUES (#{iindex},#{user_id},#{userName}, #{sku_id}, #{o_id}, #{date}, #{area},#{areaName}, #{num},#{payType},)")
+    void addOrder(@Param("tableName")String tableName, @Param("iindex")Integer iindex,@Param("user_id")Integer user_id,@Param("userName")String userName, @Param("sku_id")Integer sku_id,@Param("o_id") Integer o_id, @Param("date")Date date,@Param("area") Integer area,@Param("areaName")String areaName, @Param("num")Integer num,@Param("payType")String payType);
 
 }

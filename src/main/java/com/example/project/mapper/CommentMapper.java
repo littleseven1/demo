@@ -22,10 +22,10 @@ public interface CommentMapper {
                 String tableName = "comment_"+fileKey;
 
                 String createTableSQL = "CREATE TABLE IF NOT EXISTS " + tableName + " (" +
+                        "iindex INT PRIMARY KEY," +
                         " user_id INT NOT NULL," +
                         " o_id INT NOT NULL," +
-                        " score INT NOT NULL," +
-                        " PRIMARY KEY (user_id, o_id,score) "+
+                        " score INT NOT NULL" +
                         ")" ;
 
                 statement.executeUpdate(createTableSQL);
@@ -34,7 +34,7 @@ public interface CommentMapper {
             }
         }
     }
-    @Insert("INSERT INTO ${tableName} (user_id, o_id, score) " +
-            "VALUES (#{user_id}, #{o_id}, #{score})")
-    void addComment(@Param("tableName")String tableName,@Param("user_id") Integer user_id, @Param("o_id")Integer o_id, @Param("score")Integer score);
+    @Insert("INSERT INTO ${tableName} (iindex,user_id, o_id, score) " +
+            "VALUES (#{iindex},#{user_id}, #{o_id}, #{score})")
+    void addComment(@Param("tableName")String tableName,@Param("iindex") Integer iindex,@Param("user_id") Integer user_id, @Param("o_id")Integer o_id, @Param("score")Integer score);
 }

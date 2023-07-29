@@ -22,11 +22,12 @@ public interface ActionMapper {
                 String tableName ="action_" +fileKey  ;
 
                 String createTableSQL = "CREATE TABLE IF NOT EXISTS " + tableName + " (" +
+                        "iindex INT PRIMARY KEY," +
                         "user_id INT NOT NULL," +
+                        "userName VARCHAR(255) NOT NULL," +
                         "sku_id INT NOT NULL," +
                         "date DATE NOT NULL," +
-                        "num INT NOT NULL," +
-                        "PRIMARY KEY (user_id, sku_id,date,num)"+
+                        "num INT NOT NULL" +
                         " )";
 
                 statement.executeUpdate(createTableSQL);
@@ -36,6 +37,6 @@ public interface ActionMapper {
         }
     }
 
-    @Insert("INSERT INTO ${tableName} (user_id, sku_id, date, num)"+" VALUES (#{user_id}, #{sku_id}, #{date}, #{num})")
-    void addAction(@Param("tableName") String tableName,@Param("user_id") Integer user_id,@Param("sku_id") Integer sku_id, @Param("date") Date date,@Param("num") Integer num);
+    @Insert("INSERT INTO ${tableName} (iindex,user_id, userName,sku_id, date, num)"+" VALUES (#{iindex},#{user_id}, #{userName},#{sku_id}, #{date}, #{num})")
+    void addAction(@Param("tableName") String tableName,@Param("iindex") Integer iindex,@Param("user_id") Integer user_id,@Param("userName") String userName,@Param("sku_id") Integer sku_id, @Param("date") Date date,@Param("num") Integer num);
 }

@@ -21,10 +21,11 @@ public interface SkuMapper {
                 String tableName ="sku_"+fileKey ;
 
                 String createTableSQL = "CREATE TABLE IF NOT EXISTS " + tableName + "(" +
+                        "iindex INT PRIMARY KEY," +
                         "sku_id INT NOT NULL," +
-                        "price INT NOT NULL," +
+                        "price float NOT NULL," +
                         "cate INT NOT NULL," +
-                        "PRIMARY KEY (sku_id,price,cate) " +
+                        "cateName VARCHAR(255) NOT NULL" +
                         ")" ;
 
                 statement.executeUpdate(createTableSQL);
@@ -33,7 +34,7 @@ public interface SkuMapper {
             }
         }
     }
-    @Insert("INSERT INTO ${tableName} (sku_id, price, cate) VALUES (#{sku_id}, #{price}, #{cate})")
-    void addSku(@Param("tableName")String tableName,@Param("sku_id") Integer sku_id, @Param("price")Integer price, @Param("cate")Integer cate);
+    @Insert("INSERT INTO ${tableName} (iindex,sku_id, price, cate,cateName) VALUES (#{iindex},#{sku_id}, #{price}, #{cate},#{cateName})")
+    void addSku(@Param("tableName")String tableName,@Param("iindex") Integer iindex,@Param("sku_id") Integer sku_id, @Param("price")Integer price, @Param("cate")Integer cate,@Param("cateName")String cateName);
 
 }
