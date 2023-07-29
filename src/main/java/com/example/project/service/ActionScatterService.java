@@ -36,9 +36,9 @@ public class ActionScatterService {
 
         return result;
     }
-
     private int categorizeUser(int viewCount) {
         if (viewCount > 1000) {
+
             return 1;
         } else if (viewCount > 700) {
             return 2;
