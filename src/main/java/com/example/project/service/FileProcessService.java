@@ -69,7 +69,6 @@ public class FileProcessService {
                                 }
                             }
 
-                            break;
                         }
                     }
                     zipInputStream.closeEntry();

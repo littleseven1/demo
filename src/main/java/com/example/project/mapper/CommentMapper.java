@@ -1,6 +1,7 @@
 package com.example.project.mapper;
 
 
+import com.example.project.entity.CommentData;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -9,6 +10,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
 @Mapper
 public interface CommentMapper {
@@ -34,7 +36,13 @@ public interface CommentMapper {
             }
         }
     }
-    @Insert("INSERT INTO ${tableName} (iindex,user_id, o_id, score) " +
-            "VALUES (#{iindex},#{user_id}, #{o_id}, #{score})")
-    void addComment(@Param("tableName")String tableName,@Param("iindex") Integer iindex,@Param("user_id") Integer user_id, @Param("o_id")Integer o_id, @Param("score")Integer score);
+    @Insert({
+            "<script>",
+            "INSERT INTO ${tableName} (iindex, user_id, o_id, score) VALUES ",
+            "<foreach collection='list' item='item' separator=','>",
+            "(#{item.iindex}, #{item.user_id}, #{item.o_id}, #{item.score})",
+            "</foreach>",
+            "</script>"
+    })
+    void batchInsertComments(@Param("tableName") String tableName, @Param("list") List<CommentData> commentDataList);
 }

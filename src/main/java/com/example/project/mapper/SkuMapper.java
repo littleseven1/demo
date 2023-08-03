@@ -1,5 +1,6 @@
 package com.example.project.mapper;
 
+import com.example.project.entity.SkuData;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -8,6 +9,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
 @Mapper
 public interface SkuMapper {
@@ -34,7 +36,14 @@ public interface SkuMapper {
             }
         }
     }
-    @Insert("INSERT INTO ${tableName} (iindex,sku_id, price, cate,cateName) VALUES (#{iindex},#{sku_id}, #{price}, #{cate},#{cateName})")
-    void addSku(@Param("tableName")String tableName,@Param("iindex") Integer iindex,@Param("sku_id") Integer sku_id, @Param("price")double price, @Param("cate")Integer cate,@Param("cateName")String cateName);
+    @Insert({
+            "<script>",
+            "INSERT INTO ${tableName} (iindex, sku_id, price, cate, cateName) VALUES ",
+            "<foreach collection='list' item='item' separator=','>",
+            "(#{item.iindex}, #{item.sku_id}, #{item.price}, #{item.cate}, #{item.cateName})",
+            "</foreach>",
+            "</script>"
+    })
+    void batchInsertSkus(@Param("tableName") String tableName, @Param("list") List<SkuData> skuDataList);
 
 }

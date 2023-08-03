@@ -1,6 +1,6 @@
 package com.example.project.service;
 
-import com.example.project.entity.Overview;
+import com.example.project.entity.*;
 import com.example.project.filepath;
 import com.example.project.mapper.*;
 import org.apache.commons.csv.CSVFormat;
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -86,8 +87,6 @@ public class DataSaveService {
                             case "comment.csv" -> processCommentSheetCSV(inputStream, fileKey);
                         }
                     }
-
-                    break;
                 }
             }
             zipInputStream.closeEntry();
@@ -98,6 +97,7 @@ public class DataSaveService {
     }
 
     private void processActionSheet(Workbook workbook, String fileKey) {
+        createTable_action.DB(fileKey);
         Sheet sheet = workbook.getSheetAt(0);
         int USER_ID_INDEX = 999;
         int USERNAME_INDEX = 999;
@@ -105,7 +105,12 @@ public class DataSaveService {
         int DATE_INDEX = 999;
         int NUM_INDEX = 999;
         Row headerRow = sheet.getRow(0);
-        for (int i = 1; i <=5; i++) {
+
+        List<ActionData> actionDataList = new ArrayList<>();
+        int batchSize = 50000;
+        int count = 0;
+
+        for (int i = 1; i <= 5; i++) {
             String str = getCellValueAsString(headerRow.getCell(i));
             if (str != null && str.equals("user_id")) {
                 USER_ID_INDEX = i;
@@ -119,21 +124,43 @@ public class DataSaveService {
                 NUM_INDEX = i;
             }
         }
+
         for (Row row : sheet) {
             if (row.getRowNum() == 0) continue;
-            Integer iindex=getCellValueAsInteger(row.getCell(0));
+            Integer iindex = getCellValueAsInteger(row.getCell(0));
             Integer userId = getCellValueAsInteger(row.getCell(USER_ID_INDEX));
             String userName = getCellValueAsString(row.getCell(USERNAME_INDEX));
             Integer skuId = getCellValueAsInteger(row.getCell(SKU_ID_INDEX));
             Date date = getCellValueAsDate(row.getCell(DATE_INDEX));
             Integer num = getCellValueAsInteger(row.getCell(NUM_INDEX));
-            createTable_action.DB(fileKey);
+
+            ActionData actionData = new ActionData();
+            actionData.setIindex(iindex);
+            actionData.setUser_id(userId);
+            actionData.setUserName(userName);
+            actionData.setSku_id(skuId);
+            actionData.setDate(date);
+            actionData.setNum(num);
+
+            actionDataList.add(actionData);
+            count++;
+
+            if (count % batchSize == 0) {
+                String tableName = "action_" + fileKey;
+                actionMapper.batchInsertActions(tableName, actionDataList);
+                actionDataList.clear();
+            }
+        }
+
+        // 插入最后一批未满批次的数据
+        if (!actionDataList.isEmpty()) {
             String tableName = "action_" + fileKey;
-            actionMapper.addAction(tableName,iindex, userId, userName, skuId, date, num);
+            actionMapper.batchInsertActions(tableName, actionDataList);
         }
     }
 
     private void processOrderSheet(Workbook workbook, String fileKey) {
+        createTable_order.DB(fileKey);
         Sheet sheet = workbook.getSheetAt(0);
         int USER_ID_INDEX = 999;
         int USERNAME_INDEX = 999;
@@ -145,6 +172,10 @@ public class DataSaveService {
         int NUM_INDEX = 999;
         int PAYTYPE_INDEX = 999;
         Row headerRow = sheet.getRow(0);
+        List<OrderData> orderDataList = new ArrayList<>();
+        int batchSize = 50000;
+        int count = 0;
+
         for (int i = 1; i <= 9; i++) {
             String str = getCellValueAsString(headerRow.getCell(i));
             if (str != null && str.equals("user_id")) {
@@ -170,7 +201,7 @@ public class DataSaveService {
 
         for (Row row : sheet) {
             if (row.getRowNum() == 0) continue;
-            Integer iindex=getCellValueAsInteger(row.getCell(0));
+            Integer iindex = getCellValueAsInteger(row.getCell(0));
             Integer userId = getCellValueAsInteger(row.getCell(USER_ID_INDEX));
             String userName = getCellValueAsString(row.getCell(USERNAME_INDEX));
             Integer skuId = getCellValueAsInteger(row.getCell(SKU_ID_INDEX));
@@ -180,21 +211,47 @@ public class DataSaveService {
             String areaName = getCellValueAsString(row.getCell(AREANAME_INDEX));
             Integer num = getCellValueAsInteger(row.getCell(NUM_INDEX));
             String payType = getCellValueAsString(row.getCell(PAYTYPE_INDEX));
-            createTable_order.DB(fileKey);
+
+            OrderData orderData = new OrderData();
+            orderData.setIindex(iindex);
+            orderData.setUser_id(userId);
+            orderData.setUserName(userName);
+            orderData.setSku_id(skuId);
+            orderData.setO_id(orderId);
+            orderData.setDate(date);
+            orderData.setArea(area);
+            orderData.setAreaName(areaName);
+            orderData.setNum(num);
+            orderData.setPayType(payType);
+
+            orderDataList.add(orderData);
+            count++;
+
+            if (count % batchSize == 0) {
+                String tableName = "order_" + fileKey;
+                orderMapper.batchInsertOrders(tableName, orderDataList);
+                orderDataList.clear();
+            }
+        }
+        if (!orderDataList.isEmpty()) {
             String tableName = "order_" + fileKey;
-            orderMapper.addOrder(tableName,iindex, userId, userName, skuId, orderId, date, area, areaName, num, payType);
+            orderMapper.batchInsertOrders(tableName, orderDataList);
         }
     }
 
     private void processSkuSheet(Workbook workbook, String fileKey) {
+        createTable_sku.DB(fileKey);
         Sheet sheet = workbook.getSheetAt(0);
         int SKU_ID_INDEX = 999;
         int PRICE_INDEX = 999;
         int CATE_INDEX = 999;
         int CATENAME_INDEX = 999;
-
         Row headerRow = sheet.getRow(0);
-        for (int i =1; i <= 4; i++) {
+        List<SkuData> skuDataList = new ArrayList<>();
+        int batchSize = 50000;
+        int count = 0;
+
+        for (int i = 1; i <= 4; i++) {
             String str = getCellValueAsString(headerRow.getCell(i));
             if (str != null && str.equals("sku_id")) {
                 SKU_ID_INDEX = i;
@@ -206,26 +263,49 @@ public class DataSaveService {
                 CATENAME_INDEX = i;
             }
         }
+
         for (Row row : sheet) {
             if (row.getRowNum() == 0) continue;
-            Integer iindex=getCellValueAsInteger(row.getCell(0));
+            Integer iindex = getCellValueAsInteger(row.getCell(0));
             Integer skuId = getCellValueAsInteger(row.getCell(SKU_ID_INDEX));
             double price = getCellValueAsDouble(row.getCell(PRICE_INDEX));
             Integer category = getCellValueAsInteger(row.getCell(CATE_INDEX));
             String cateName = getCellValueAsString(row.getCell(CATENAME_INDEX));
-            createTable_sku.DB(fileKey);
+
+            SkuData skuData = new SkuData();
+            skuData.setIindex(iindex);
+            skuData.setSku_id(skuId);
+            skuData.setPrice((float) price);
+            skuData.setCate(category);
+            skuData.setCateName(cateName);
+
+            skuDataList.add(skuData);
+            count++;
+
+            if (count % batchSize == 0) {
+                String tableName = "sku_" + fileKey;
+                skuMapper.batchInsertSkus(tableName, skuDataList);
+                skuDataList.clear();
+            }
+        }
+
+        if (!skuDataList.isEmpty()) {
             String tableName = "sku_" + fileKey;
-            skuMapper.addSku(tableName,iindex, skuId, price, category, cateName);
+            skuMapper.batchInsertSkus(tableName, skuDataList);
         }
     }
 
     private void processCommentSheet(Workbook workbook, String fileKey) {
+        createTable_comment.DB(fileKey);
         Sheet sheet = workbook.getSheetAt(0);
         int USER_ID_INDEX = 999;
         int ORDER_ID_INDEX = 999;
         int SCORE_INDEX = 999;
-
         Row headerRow = sheet.getRow(0);
+        List<CommentData> commentDataList = new ArrayList<>();
+        int batchSize = 50000;
+        int count = 0;
+
         for (int i = 1; i <= 3; i++) {
             String str = getCellValueAsString(headerRow.getCell(i));
             if (str != null && str.equals("user_id")) {
@@ -239,53 +319,81 @@ public class DataSaveService {
 
         for (Row row : sheet) {
             if (row.getRowNum() == 0) continue;
-            Integer iindex=getCellValueAsInteger(row.getCell(0));
+            Integer iindex = getCellValueAsInteger(row.getCell(0));
             Integer userId = getCellValueAsInteger(row.getCell(USER_ID_INDEX));
             Integer orderId = getCellValueAsInteger(row.getCell(ORDER_ID_INDEX));
             Integer score = getCellValueAsInteger(row.getCell(SCORE_INDEX));
-            createTable_comment.DB(fileKey);
+
+            CommentData commentData = new CommentData();
+            commentData.setIindex(iindex);
+            commentData.setUser_id(userId);
+            commentData.setO_id(orderId);
+            commentData.setScore(score);
+
+            commentDataList.add(commentData);
+            count++;
+
+            if (count % batchSize == 0) {
+                String tableName = "comment_" + fileKey;
+                commentMapper.batchInsertComments(tableName, commentDataList);
+                commentDataList.clear();
+            }
+        }
+        if (!commentDataList.isEmpty()) {
             String tableName = "comment_" + fileKey;
-            commentMapper.addComment(tableName,iindex,userId, orderId, score);
+            commentMapper.batchInsertComments(tableName, commentDataList);
         }
     }
 
+
     private void processActionSheetCSV(InputStream inputStream, String fileKey) {
+        createTable_action.DB(fileKey);
         try {
-            Reader reader = new InputStreamReader(inputStream,"utf-8");
+            Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
             Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(reader);
             int USER_ID_INDEX = 1;
             int USERNAME_INDEX = 2;
             int SKU_ID_INDEX = 3;
             int DATE_INDEX = 4;
             int NUM_INDEX = 5;
-           CSVRecord headerRow = records.iterator().next();
-//            for (int i = 0; i < headerRow.size(); i++) {
-//                String header = headerRow.get(i);
-//                if (header.equalsIgnoreCase("user_id")) {
-//                    USER_ID_INDEX = i;
-//                } else if (header.equalsIgnoreCase("userName")) {
-//                    USERNAME_INDEX = i;
-//                } else if (header.equalsIgnoreCase("sku_id")) {
-//                    SKU_ID_INDEX = i;
-//                } else if (header.equalsIgnoreCase("date")) {
-//                    DATE_INDEX = i;
-//                } else if (header.equalsIgnoreCase("num")) {
-//                    NUM_INDEX = i;
-//                }
-//            }
+
+            int batchSize = 50000; // 设置每批次的大小
+            List<ActionData> batchDataList = new ArrayList<>();
+            int count = 0;
+            CSVRecord headerRow = records.iterator().next();
             for (CSVRecord record : records) {
-                Integer iidex=Integer.parseInt(record.get(0));
-                Integer userId = USER_ID_INDEX!=-1?Integer.parseInt(record.get(USER_ID_INDEX)):null;
+                Integer iindex = Integer.parseInt(record.get(0));
+                Integer userId = USER_ID_INDEX != -1 ? Integer.parseInt(record.get(USER_ID_INDEX)) : null;
                 String userName = USERNAME_INDEX != -1 ? record.get(USERNAME_INDEX) : null;
-                double skuI = SKU_ID_INDEX!=-1?Double.parseDouble(record.get(SKU_ID_INDEX)):null;
-                Integer skuId=(int)skuI;
-                Date date =DATE_INDEX!=-1?isDate(record.get(DATE_INDEX)):null;
-                double numi =NUM_INDEX!=-1?Double.parseDouble(record.get(NUM_INDEX)):null;
-                Integer num=(int)numi;
-                createTable_action.DB(fileKey);
-                String tableName = "action_" + fileKey;
-                actionMapper.addAction(tableName,iidex,userId, userName, skuId, date, num);
+                double skuI = SKU_ID_INDEX != -1 ? Double.parseDouble(record.get(SKU_ID_INDEX)) : null;
+                Integer skuId = (int) skuI;
+                Date date = DATE_INDEX != -1 ? isDate(record.get(DATE_INDEX)) : null;
+                double numi = NUM_INDEX != -1 ? Double.parseDouble(record.get(NUM_INDEX)) : null;
+                Integer num = (int) numi;
+
+                ActionData actionData = new ActionData();
+                actionData.setIindex(iindex);
+                actionData.setUser_id(userId);
+                actionData.setUserName(userName);
+                actionData.setSku_id(skuId);
+                actionData.setDate(date);
+                actionData.setNum(num);
+
+                batchDataList.add(actionData);
+                count++;
+
+                if (count % batchSize == 0) {
+                    String tableName = "action_" + fileKey;
+                    actionMapper.batchInsertActions(tableName, batchDataList);
+                    batchDataList.clear();
+                }
             }
+
+            if (!batchDataList.isEmpty()) {
+                String tableName = "action_" + fileKey;
+                actionMapper.batchInsertActions(tableName, batchDataList);
+            }
+
             reader.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -293,11 +401,12 @@ public class DataSaveService {
     }
 
     private void processOrderSheetCSV(InputStream inputStream, String fileKey) {
+        createTable_order.DB(fileKey);
         try {
             Reader reader = new InputStreamReader(inputStream);
             Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(reader);
 
-            int USER_ID_INDEX =1;
+            int USER_ID_INDEX = 1;
             int USERNAME_INDEX = 2;
             int SKU_ID_INDEX = 3;
             int ORDER_ID_INDEX = 4;
@@ -307,45 +416,47 @@ public class DataSaveService {
             int NUM_INDEX = 8;
             int PAYTYPE_INDEX = 9;
 
-       CSVRecord headerRow = records.iterator().next();
-//            for (int i = 0; i < headerRow.size(); i++) {
-//                String header = headerRow.get(i);
-//                if (header.equalsIgnoreCase("user_id")) {
-//                    USER_ID_INDEX = i;
-//                } else if (header.equalsIgnoreCase("userName")) {
-//                    USERNAME_INDEX = i;
-//                } else if (header.equalsIgnoreCase("sku_id")) {
-//                    SKU_ID_INDEX = i;
-//                } else if (header.equalsIgnoreCase("o_id")) {
-//                    ORDER_ID_INDEX = i;
-//                } else if (header.equalsIgnoreCase("date")) {
-//                    DATE_INDEX = i;
-//                } else if (header.equalsIgnoreCase("area")) {
-//                    AREA_INDEX = i;
-//                } else if (header.equalsIgnoreCase("areaName")) {
-//                    AREANAME_INDEX = i;
-//                } else if (header.equalsIgnoreCase("num")) {
-//                    NUM_INDEX = i;
-//                } else if (header.equalsIgnoreCase("payType")) {
-//                    PAYTYPE_INDEX = i;
-//                }
-//            }
-            
+            int batchSize = 50000;
+            List<OrderData> batchDataList = new ArrayList<>();
+            int count = 0;
+            CSVRecord headerRow = records.iterator().next();
             for (CSVRecord record : records) {
-                Integer iidex=Integer.parseInt(record.get(0));
-                Integer userId = USER_ID_INDEX!=-1?Integer.parseInt(record.get(USER_ID_INDEX)):null;
+                Integer iidex = Integer.parseInt(record.get(0));
+                Integer userId = USER_ID_INDEX != -1 ? Integer.parseInt(record.get(USER_ID_INDEX)) : null;
                 String userName = USERNAME_INDEX != -1 ? record.get(USERNAME_INDEX) : null;
-                Integer skuId = SKU_ID_INDEX!=-1?Integer.parseInt(record.get(SKU_ID_INDEX)):null;
-                Integer orderId =ORDER_ID_INDEX!=-1?Integer.parseInt(record.get(ORDER_ID_INDEX)):null;
-                Date date = DATE_INDEX!=-1?isDate(record.get(DATE_INDEX)):null;
-                Integer area = AREA_INDEX!=-1?Integer.parseInt(record.get(AREA_INDEX)):null;
+                Integer skuId = SKU_ID_INDEX != -1 ? Integer.parseInt(record.get(SKU_ID_INDEX)) : null;
+                Integer orderId = ORDER_ID_INDEX != -1 ? Integer.parseInt(record.get(ORDER_ID_INDEX)) : null;
+                Date date = DATE_INDEX != -1 ? isDate(record.get(DATE_INDEX)) : null;
+                Integer area = AREA_INDEX != -1 ? Integer.parseInt(record.get(AREA_INDEX)) : null;
                 String areaName = AREANAME_INDEX != -1 ? record.get(AREANAME_INDEX) : null;
-                Integer num = NUM_INDEX!=-1?Integer.parseInt(record.get(NUM_INDEX)):null;
+                Integer num = NUM_INDEX != -1 ? Integer.parseInt(record.get(NUM_INDEX)) : null;
                 String payType = PAYTYPE_INDEX != -1 ? record.get(PAYTYPE_INDEX) : null;
-                createTable_order.DB(fileKey);
-                String tableName = "order_" + fileKey;
-                orderMapper.addOrder(tableName,iidex,userId, userName, skuId, orderId, date, area, areaName, num, payType);
 
+                OrderData orderData = new OrderData();
+                orderData.setIindex(iidex);
+                orderData.setUser_id(userId);
+                orderData.setUserName(userName);
+                orderData.setSku_id(skuId);
+                orderData.setO_id(orderId);
+                orderData.setDate(date);
+                orderData.setArea(area);
+                orderData.setAreaName(areaName);
+                orderData.setNum(num);
+                orderData.setPayType(payType);
+
+                batchDataList.add(orderData);
+                count++;
+
+                if (count % batchSize == 0) {
+                    String tableName = "order_" + fileKey;
+                    orderMapper.batchInsertOrders(tableName, batchDataList);
+                    batchDataList.clear();
+                }
+            }
+
+            if (!batchDataList.isEmpty()) {
+                String tableName = "order_" + fileKey;
+                orderMapper.batchInsertOrders(tableName, batchDataList);
             }
 
             reader.close();
@@ -355,6 +466,7 @@ public class DataSaveService {
     }
 
     private void processSkuSheetCSV(InputStream inputStream, String fileKey) {
+        createTable_sku.DB(fileKey);
         try {
             Reader reader = new InputStreamReader(inputStream);
             Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(reader);
@@ -362,29 +474,38 @@ public class DataSaveService {
             int PRICE_INDEX = 2;
             int CATE_INDEX = 3;
             int CATENAME_INDEX = 4;
-          CSVRecord headerRow = records.iterator().next();
-//            for (int i = 0; i < headerRow.size(); i++) {
-//                String header = headerRow.get(i);
-//                if (header != null && header.equalsIgnoreCase("sku_id")) {
-//                    SKU_ID_INDEX = i;
-//                } else if (header != null && header.equalsIgnoreCase("price")) {
-//                    PRICE_INDEX = i;
-//                } else if (header != null && header.equalsIgnoreCase("cate")) {
-//                    CATE_INDEX = i;
-//                } else if (header != null && header.equalsIgnoreCase("cateName")) {
-//                    CATENAME_INDEX = i;
-//                }
-//            }
-            
+
+            int batchSize = 50000;
+            List<SkuData> batchDataList = new ArrayList<>();
+            int count = 0;
+            CSVRecord headerRow = records.iterator().next();
             for (CSVRecord record : records) {
-                Integer iidex=Integer.parseInt(record.get(0));
-                Integer skuId =SKU_ID_INDEX!=-1?Integer.parseInt(record.get(SKU_ID_INDEX)):null;
-                double price =PRICE_INDEX!=-1?Double.parseDouble(record.get(PRICE_INDEX)):null;
-                Integer category =CATE_INDEX!=-1?Integer.parseInt(record.get(CATE_INDEX)):null;
+                Integer iidex = Integer.parseInt(record.get(0));
+                Integer skuId = SKU_ID_INDEX != -1 ? Integer.parseInt(record.get(SKU_ID_INDEX)) : null;
+                double price = PRICE_INDEX != -1 ? Double.parseDouble(record.get(PRICE_INDEX)) : null;
+                Integer category = CATE_INDEX != -1 ? Integer.parseInt(record.get(CATE_INDEX)) : null;
                 String cateName = CATENAME_INDEX != -1 ? record.get(CATENAME_INDEX) : null;
-                createTable_sku.DB(fileKey);
+
+                SkuData skuData = new SkuData();
+                skuData.setIindex(iidex);
+                skuData.setSku_id(skuId);
+                skuData.setPrice((float) price);
+                skuData.setCate(category);
+                skuData.setCateName(cateName);
+
+                batchDataList.add(skuData);
+                count++;
+
+                if (count % batchSize == 0) {
+                    String tableName = "sku_" + fileKey;
+                    skuMapper.batchInsertSkus(tableName, batchDataList);
+                    batchDataList.clear();
+                }
+            }
+
+            if (!batchDataList.isEmpty()) {
                 String tableName = "sku_" + fileKey;
-                skuMapper.addSku(tableName,iidex,skuId, price, category, cateName);
+                skuMapper.batchInsertSkus(tableName, batchDataList);
             }
 
             reader.close();
@@ -393,35 +514,45 @@ public class DataSaveService {
         }
     }
 
+
     private void processCommentSheetCSV(InputStream inputStream, String fileKey) {
+        createTable_comment.DB(fileKey);
         try {
             Reader reader = new InputStreamReader(inputStream);
             Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(reader);
-            int USER_ID_INDEX =1;
+            int USER_ID_INDEX = 1;
             int ORDER_ID_INDEX = 2;
             int SCORE_INDEX = 3;
 
-           CSVRecord headerRow = records.iterator().next();
-//            for (int i = 0; i < headerRow.size(); i++) {
-//                String header = headerRow.get(i);
-//                if (header != null && header.equalsIgnoreCase("user_id")) {
-//                    USER_ID_INDEX = i;
-//                } else if (header != null && header.equalsIgnoreCase("o_id")) {
-//                    ORDER_ID_INDEX = i;
-//                } else if (header != null && header.equalsIgnoreCase("score")) {
-//                    SCORE_INDEX = i;
-//                }
-//            }
-            
+            int batchSize = 50000;
+            List<CommentData> batchDataList = new ArrayList<>();
+            int count = 0;
+            CSVRecord headerRow = records.iterator().next();
             for (CSVRecord record : records) {
-                Integer iidex=Integer.parseInt(record.get(0));
-                Integer userId =USER_ID_INDEX!=-1? Integer.parseInt(record.get(USER_ID_INDEX)):null;
-                Integer orderId =ORDER_ID_INDEX!=-1?Integer.parseInt(record.get(ORDER_ID_INDEX)):null;
-                Integer score = SCORE_INDEX!=-1?Integer.parseInt(record.get(SCORE_INDEX)):null;
-                createTable_comment.DB(fileKey);
+                Integer iidex = Integer.parseInt(record.get(0));
+                Integer userId = USER_ID_INDEX != -1 ? Integer.parseInt(record.get(USER_ID_INDEX)) : null;
+                Integer orderId = ORDER_ID_INDEX != -1 ? Integer.parseInt(record.get(ORDER_ID_INDEX)) : null;
+                Integer score = SCORE_INDEX != -1 ? Integer.parseInt(record.get(SCORE_INDEX)) : null;
+
+                CommentData commentData = new CommentData();
+                commentData.setIindex(iidex);
+                commentData.setUser_id(userId);
+                commentData.setO_id(orderId);
+                commentData.setScore(score);
+
+                batchDataList.add(commentData);
+                count++;
+
+                if (count % batchSize == 0) {
+                    String tableName = "comment_" + fileKey;
+                    commentMapper.batchInsertComments(tableName, batchDataList);
+                    batchDataList.clear();
+                }
+            }
+
+            if (!batchDataList.isEmpty()) {
                 String tableName = "comment_" + fileKey;
-                commentMapper.addComment(tableName,iidex, userId, orderId, score);
-            
+                commentMapper.batchInsertComments(tableName, batchDataList);
             }
 
             reader.close();
@@ -429,6 +560,7 @@ public class DataSaveService {
             e.printStackTrace();
         }
     }
+
 
     private Integer getCellValueAsInteger(Cell cell) {
         if (cell == null) {
@@ -455,6 +587,7 @@ public class DataSaveService {
             return null;
         }
     }
+
     private Double getCellValueAsDouble(Cell cell) {
         if (cell == null) {
             return null;

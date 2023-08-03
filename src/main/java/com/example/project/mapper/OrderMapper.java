@@ -1,5 +1,6 @@
 package com.example.project.mapper;
 
+import com.example.project.entity.OrderData;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -9,6 +10,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
+import java.util.List;
 
 @Mapper
 public interface OrderMapper {
@@ -40,8 +42,14 @@ public interface OrderMapper {
             }
         }
     }
-    @Insert("INSERT INTO ${tableName} (iindex,user_id,userName sku_id, o_id, date, area,areaName,num,payType) " +
-            "VALUES (#{iindex},#{user_id},#{userName}, #{sku_id}, #{o_id}, #{date}, #{area},#{areaName}, #{num},#{payType},)")
-    void addOrder(@Param("tableName")String tableName, @Param("iindex")Integer iindex,@Param("user_id")Integer user_id,@Param("userName")String userName, @Param("sku_id")Integer sku_id,@Param("o_id") Integer o_id, @Param("date")Date date,@Param("area") Integer area,@Param("areaName")String areaName, @Param("num")Integer num,@Param("payType")String payType);
+    @Insert({
+            "<script>",
+            "INSERT INTO ${tableName} (iindex, user_id, userName, sku_id, o_id, date, area, areaName, num, payType) VALUES ",
+            "<foreach collection='list' item='item' separator=','>",
+            "(#{item.iindex}, #{item.user_id}, #{item.userName}, #{item.sku_id}, #{item.o_id}, #{item.date}, #{item.area}, #{item.areaName}, #{item.num}, #{item.payType})",
+            "</foreach>",
+            "</script>"
+    })
+    void batchInsertOrders(@Param("tableName") String tableName, @Param("list") List<OrderData> orderDataList);
 
 }

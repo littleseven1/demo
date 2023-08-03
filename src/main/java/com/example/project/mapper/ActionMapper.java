@@ -1,4 +1,5 @@
 package com.example.project.mapper;
+import com.example.project.entity.ActionData;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -8,6 +9,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
+import java.util.List;
 
 @Mapper
 public interface ActionMapper {
@@ -36,7 +38,13 @@ public interface ActionMapper {
             }
         }
     }
-
-    @Insert("INSERT INTO ${tableName} (iindex,user_id, userName,sku_id, date, num)"+" VALUES (#{iindex},#{user_id}, #{userName},#{sku_id}, #{date}, #{num})")
-    void addAction(@Param("tableName") String tableName,@Param("iindex") Integer iindex,@Param("user_id") Integer user_id,@Param("userName") String userName,@Param("sku_id") Integer sku_id, @Param("date") Date date,@Param("num") Integer num);
+    @Insert({
+            "<script>",
+            "INSERT INTO ${tableName} (iindex, user_id, userName, sku_id, date, num) VALUES ",
+            "<foreach collection='list' item='item' separator=','>",
+            "(#{item.iindex}, #{item.user_id}, #{item.userName}, #{item.sku_id}, #{item.date}, #{item.num})",
+            "</foreach>",
+            "</script>"
+    })
+    void batchInsertActions(@Param("tableName") String tableName, @Param("list") List<ActionData> actionDataList);
 }
