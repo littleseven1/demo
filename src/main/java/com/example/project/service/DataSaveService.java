@@ -210,7 +210,7 @@ public class DataSaveService {
             if (row.getRowNum() == 0) continue;
             Integer iindex=getCellValueAsInteger(row.getCell(0));
             Integer skuId = getCellValueAsInteger(row.getCell(SKU_ID_INDEX));
-            Integer price = getCellValueAsInteger(row.getCell(PRICE_INDEX));
+            double price = getCellValueAsDouble(row.getCell(PRICE_INDEX));
             Integer category = getCellValueAsInteger(row.getCell(CATE_INDEX));
             String cateName = getCellValueAsString(row.getCell(CATENAME_INDEX));
             createTable_sku.DB(fileKey);
@@ -451,6 +451,18 @@ public class DataSaveService {
         CellType cellType = cell.getCellType();
         if (cellType == CellType.NUMERIC) {
             return cell.getDateCellValue();
+        } else {
+            return null;
+        }
+    }
+    private Double getCellValueAsDouble(Cell cell) {
+        if (cell == null) {
+            return null;
+        }
+
+        CellType cellType = cell.getCellType();
+        if (cellType == CellType.NUMERIC) {
+            return cell.getNumericCellValue();
         } else {
             return null;
         }

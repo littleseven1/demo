@@ -23,7 +23,7 @@ public interface SkuMapper {
                 String createTableSQL = "CREATE TABLE IF NOT EXISTS " + tableName + "(" +
                         "iindex INT PRIMARY KEY," +
                         "sku_id INT NOT NULL," +
-                        "price float NOT NULL," +
+                        "price double NOT NULL," +
                         "cate INT NOT NULL," +
                         "cateName VARCHAR(255) NOT NULL" +
                         ")" ;
